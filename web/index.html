@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>COMB</title>
+<meta name="description" content="comb-beta.0 — a point-cloud honeybee that dances what it finds on the web. Not a bee connectome.">
+<link rel="stylesheet" href="css/comb.css">
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <h1>COMB</h1>
+      <span class="tag">COMB-BETA.0</span>
+      <span class="ticker">$COMB</span>
+      <a href="/docs" class="tag">DOCS</a>
+    </div>
+    <div class="banner" id="hud-banner">not a bee connectome · $COMB</div>
+  </header>
+
+  <main class="stage">
+    <div id="specimen-pane">
+      <div class="corner tl"><span class="v" id="corner-brain">loading…</span></div>
+      <div class="corner tr">Apis mellifera<br><a class="v" href="https://x.com/combexperiment" target="_blank" rel="noopener noreferrer">@combexperiment</a></div>
+      <div class="corner bl">point cloud · synthesized, not scanned</div>
+      <div class="corner br">drag to orbit</div>
+      <div class="webgl-fallback" id="webgl-fallback" hidden>WebGL required for the specimen.</div>
+
+      <pre class="specimen-overlay" id="specimen-overlay">flower    —
+host      —
+heading   0°
+dist      0.00s
+hops      0</pre>
+    </div>
+
+    <aside class="hud">
+      <div class="hblock">
+        <div class="hk">dancer</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px">
+          <span class="state-pill" id="hud-state"><span class="dot"></span><span class="label">—</span></span>
+          <span class="state-pill" id="hud-conn"><span class="dot"></span><span class="label">connecting…</span></span>
+          <span class="state-pill" id="hud-brain"><span class="dot"></span><span class="label">brain offline</span></span>
+        </div>
+        <div class="hud-status" id="hud-brain-status">no graph.npz — roam only</div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">flower url</div>
+        <div class="hv" id="hud-url">—</div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">waggle angle</div>
+        <svg class="compass" viewBox="0 0 88 88" aria-hidden="true">
+          <circle cx="44" cy="44" r="40" fill="none" stroke="#1b2329" stroke-width="1"/>
+          <g stroke="#5c6f79" stroke-width="1">
+            <line x1="44" y1="4" x2="44" y2="10"/>
+            <line x1="44" y1="78" x2="44" y2="84"/>
+            <line x1="4" y1="44" x2="10" y2="44"/>
+            <line x1="78" y1="44" x2="84" y2="44"/>
+          </g>
+          <g id="compass-needle" transform="rotate(0 44 44)">
+            <line x1="44" y1="44" x2="44" y2="10" stroke="#cfe7ff" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="44" cy="44" r="3" fill="#cfe7ff"/>
+          </g>
+        </svg>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">duration <span id="hud-dur-val" style="color:var(--ink-dim)">0.00s</span></div>
+        <div class="durbar"><div class="fill" id="hud-dur-fill"></div></div>
+        <div class="hk" style="margin-top:10px">vigor <span id="hud-vigor-val" style="color:var(--ink-dim)">0.00</span></div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">antennal lobe · 170ch</div>
+        <div class="albars" id="hud-albars"></div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">polarization compass <span id="hud-pol-val" style="color:var(--ink-dim)">0.000</span></div>
+        <div class="polbar"><div class="fill" id="hud-pol-fill"></div></div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">mushroom body</div>
+        <div class="mbgrid" id="hud-mb"></div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">colony</div>
+        <div class="workers" id="hud-workers"></div>
+      </div>
+
+      <div class="hblock">
+        <div class="hk">log</div>
+        <div class="hlog" id="hud-log"></div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="bottom">
+    <span>species <span class="latin">Apis mellifera</span> · borrowed LIF · ticker $COMB</span>
+    <span><a href="https://x.com/combexperiment" target="_blank" rel="noopener noreferrer">@combexperiment</a> · comb-beta.0 · MIT</span>
+  </footer>
+</div>
+
+<!--
+  Classic scripts, loaded in dependency order, THEN one inline module that
+  imports three.js + OrbitControls from a CDN and boots everything. This
+  split matters: a local file:// document cannot resolve `import` statements
+  between local files (Chrome blocks it as cross-origin), but it CAN resolve
+  a module importing a remote https URL, and it can always run plain
+  classic <script src="local.js"> tags. So the only ES module import left is
+  the CDN one, and every local file in web/js/ is a classic global-scope
+  script wired together via window.Comb — see waggle.js's header.
+-->
+<script src="js/waggle.js"></script>
+<script src="js/bee.js"></script>
+<script src="js/hive.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
+<script type="module">
+  import * as THREE from "three";
+  import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js";
+  window.THREE = THREE;
+  window.OrbitControls = OrbitControls;
+
+  const pane = document.getElementById("specimen-pane");
+  const fallback = document.getElementById("webgl-fallback");
+  const brainLabel = document.getElementById("corner-brain");
+
+  function hasWebGL() {
+    try {
+      const c = document.createElement("canvas");
+      return !!(window.WebGLRenderingContext &&
+        (c.getContext("webgl2") || c.getContext("webgl") || c.getContext("experimental-webgl")));
+    } catch {
+      return false;
+    }
+  }
+
+  async function boot() {
+    if (!hasWebGL()) {
+      fallback.hidden = false;
+      window.Comb.initHud(null);
+      return;
+    }
+    try {
+      // bee.js never waits on this page's server, /ws, or graph.npz — it
+      // renders from bee.json immediately, or from its own built-in
+      // procedural fallback the moment that fetch fails (e.g. file://).
+      const scene = await window.Comb.initBee(pane, "data/bee.json");
+      brainLabel.textContent = "specimen";
+      window.Comb.initHud(scene);
+    } catch (err) {
+      // Getting here means something more fundamental broke than a missing
+      // bee.json (bee.js already has its own fallback for that) — most
+      // likely no WebGL context at all.
+      fallback.hidden = false;
+      console.error("specimen failed to load:", err);
+      window.Comb.initHud(null);
+    }
+  }
+  boot();
+</script>
+</body>
+</html>

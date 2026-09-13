@@ -1,0 +1,57 @@
+# Render Blueprint for comb (comb-beta.0).
+#
+# What this deploys: one Docker web service running roam_hive.py behind
+# Playwright/Chromium. build/graph.npz (~36MB, the real FlyEM male CNS v1.0
+# connectome, 165,122 neurons / 10.2M synapses) is committed to the repo and
+# baked into the image by the Dockerfile, so there is no persistent disk and
+# no 1.1GB download on Render at all - the expensive one-time pandas/pyarrow
+# build already happened once, locally, and the small result is just checked
+# in. render-entrypoint.sh still has a fallback that downloads and builds it
+# if graph.npz is ever missing from the image, for a fork that doesn't carry
+# that file over.
+#
+# This does not attach a wallet, a key, or a provider to anything - COMB_LIVE
+# does not exist in this codebase. See README.md / NOTICE for why that's a
+# hard law here, not an oversight.
+
+services:
+  - type: web
+    name: comb
+    env: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    plan: standard      # see the RAM note below before downgrading further
+    region: oregon
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Required for roam_hive.py to open a browser at all - without this it
+      # exits 2 immediately (see roam_hive.py's __main__ guard). COMB_LIVE is
+      # deliberately not set here: it is not read anywhere in this codebase -
+      # there is no live-signing path to gate.
+      - key: FLY_ALLOW_BROWSER
+        value: "1"
+      - key: COMB_WORKERS
+        value: "8"
+      # Render injects PORT itself; render-entrypoint.sh reads it and binds
+      # roam_hive.py to 0.0.0.0:$PORT. Nothing here needs to set it.
+
+# --- Sizing notes ---
+# Steady-state memory is Chromium + 8 worker browser contexts + a
+# 165k-neuron sparse LIF sim loaded from a 36MB file - no pandas/pyarrow pass
+# to budget for on Render itself in the normal (graph.npz committed) path.
+#   - "starter" (512MB RAM) - probably too tight once Chromium plus several
+#     contexts are actually running; try it if cost matters, but "standard"
+#     is the safer default.
+#   - "standard" (2GB RAM)  - comfortable. Default above.
+# If a fork ever removes the committed graph.npz and relies on the fallback
+# download-and-build path in render-entrypoint.sh, that one-time build needs
+# a plan with several GB of headroom instead (pandas/pyarrow over the raw
+# 151M-row weights table is the memory-hungry part, not the final graph).
+#
+# --- Persistence note ---
+# mushroom.py's learned gains and build/trails.jsonl are ephemeral here -
+# they reset on every redeploy/restart, since there's no disk attached.
+# mushroom.py already honours $FLY_STATE_DIR if you want to point it at a
+# Render persistent disk later; this Blueprint doesn't provision one by
+# default to keep the base deploy simple and cheap.

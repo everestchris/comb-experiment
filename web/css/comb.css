@@ -1,0 +1,191 @@
+/* comb-beta.0 — a specimen in a void, a HUD, nothing else.
+   One grotesque for text, one mono for data. No gradients, no emoji. */
+
+:root{
+  --ink:#eaf2f7;
+  --ink-dim:#9fb2bd;
+  --ink-faint:#5c6f79;
+  --line:#1b2329;
+  --plate:#0a0d10;
+  --ground:#000;
+  --accent:#cfe7ff;
+  --accent-dim:#7aa2c4;
+  --live:#3dff88;
+  --amber:#e8c15f;
+  --bad:#ff6b6b;
+  --sans:-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,"Segoe UI",sans-serif;
+  --mono:ui-monospace,"JetBrains Mono","SFMono-Regular",Consolas,"Liberation Mono",monospace;
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--ground);color:var(--ink);
+  font-family:var(--sans);font-weight:400;font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-inline:16px;
+}
+
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid #1d4653}
+a:hover{border-bottom-color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.wrap{max-width:1280px;margin:0 auto}
+
+header.top{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:16px 0;border-bottom:1px solid var(--line);flex-wrap:wrap;
+}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.brand h1{
+  font-family:var(--sans);font-weight:700;font-size:22px;margin:0;
+  letter-spacing:.01em;color:var(--ink);
+}
+.brand .ticker{font-family:var(--mono);color:var(--live);font-size:13px;letter-spacing:.08em}
+.brand .tag{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-dim);border:1px solid var(--line);border-radius:4px;padding:2px 7px;
+}
+a.tag{border-bottom:none;display:inline-block}
+a.tag:hover{color:var(--accent);border-color:var(--accent-dim)}
+.banner{
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--ink-dim);
+  border:1px solid var(--line);border-radius:999px;padding:6px 14px;
+}
+
+main.stage{
+  display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:1px;
+  background:var(--line);border:1px solid var(--line);margin-top:16px;
+}
+@media (max-width:860px){
+  main.stage{grid-template-columns:1fr}
+}
+
+#specimen-pane{
+  background:var(--ground);position:relative;min-height:70vh;
+}
+#specimen{display:block;width:100%;height:100%;min-height:70vh}
+.webgl-fallback{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  text-align:center;padding:24px;color:var(--ink-faint);font-family:var(--mono);
+  font-size:13px;background:var(--ground);
+}
+.webgl-fallback[hidden]{display:none}
+
+/* left overlay: flower / host / heading / dist / hops / log, drawn straight
+   over the specimen canvas as one <pre> block - literal padded columns via
+   JS (hive.js), not flex/grid, so alignment never depends on layout quirks.
+   pointer-events:none so it never blocks orbit drag. max-width + a hard
+   line-length cap in hive.js keep any single value from wrapping mid-word. */
+.specimen-overlay{
+  position:absolute;top:52px;left:16px;max-width:min(62%,420px);
+  margin:0;font-family:var(--mono);font-size:11px;line-height:1.7;color:#8fa4b8;
+  pointer-events:none;background:rgba(0,0,0,.32);padding:8px 10px;border-radius:4px;
+  white-space:pre;overflow:hidden;
+}
+.specimen-overlay .ov-log{margin-top:6px;padding-top:6px;border-top:1px solid rgba(143,164,184,.2)}
+.specimen-overlay .ov-log div{
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.85;
+}
+
+.corner{
+  position:absolute;font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-faint);pointer-events:none;line-height:1.6;
+}
+.corner .v{color:var(--ink-dim)}
+.corner a.v{pointer-events:auto}
+.tl{top:16px;left:16px}
+.tr{top:16px;right:16px;text-align:right}
+.bl{bottom:16px;left:16px}
+.br{bottom:16px;right:16px;text-align:right}
+
+aside.hud{
+  background:var(--plate);display:grid;align-content:start;
+  font-family:var(--mono);
+}
+.hblock{padding:14px 16px;border-bottom:1px solid var(--line)}
+.hk{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint)}
+.hv{
+  font-size:16px;color:var(--ink);margin-top:5px;line-height:1.4;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.hv.big{font-family:var(--sans);font-size:22px;font-weight:600}
+.hv .sub{color:var(--ink-dim);font-size:11px;display:block;margin-top:2px}
+
+.state-pill{
+  display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;padding:3px 9px;border-radius:999px;border:1px solid var(--line);
+  color:var(--ink-dim);
+}
+.state-pill .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-faint)}
+.state-pill.dancing{color:var(--live);border-color:#1f5c3c}
+.state-pill.dancing .dot{background:var(--live)}
+
+.hud-status{font-family:var(--mono);font-size:10.5px;color:var(--ink-faint);margin-top:6px}
+
+.compass{width:88px;height:88px;display:block;margin-top:8px}
+.durbar,.polbar{height:8px;background:#0f151a;border:1px solid var(--line);margin-top:8px;position:relative;overflow:hidden}
+.durbar .fill{height:100%;background:var(--accent);width:0%;transition:width .2s linear}
+.polbar .fill{height:100%;background:var(--amber);width:0%;transition:width .3s linear}
+
+.albars{display:grid;grid-template-columns:repeat(34,1fr);gap:1px;margin-top:8px}
+.albars i{background:var(--accent);display:block;aspect-ratio:1;opacity:.06;border-radius:1px;transition:opacity .25s linear}
+
+.mbgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-top:4px}
+.mbgrid .k{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+.mbgrid .n{font-size:14px;color:var(--ink);margin-top:1px}
+
+.workers{display:grid;gap:6px;margin-top:8px;font-size:11px}
+.wk{display:flex;align-items:center;gap:8px;color:var(--ink-dim)}
+.wk .id{color:var(--ink-faint);width:16px}
+.wk .role{width:64px;text-transform:uppercase;letter-spacing:.06em;font-size:9.5px}
+.wk.dancer{color:var(--live)}
+.wk .role.soldier{color:var(--bad)}
+.wk .url{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+
+.hlog{
+  font-family:var(--mono);font-size:11px;color:var(--ink-dim);
+  height:130px;overflow-y:scroll;overflow-x:hidden;margin-top:8px;
+  scrollbar-gutter:stable;padding-right:10px;
+}
+.hlog div{padding:1px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hlog .veto{color:var(--amber)}
+.hlog .blocked{color:var(--bad)}
+
+/* --- docs page prose -------------------------------------------------- */
+.docs{max-width:740px;margin:0 auto;padding:36px 0 60px}
+.docs .lede{
+  font-family:var(--mono);font-size:12.5px;letter-spacing:.05em;color:var(--ink-dim);
+  margin:0 0 30px;
+}
+.docs .strap{font-size:17px;color:var(--ink);margin:0 0 40px;max-width:56ch;line-height:1.6}
+.docs section{margin-bottom:34px}
+.docs h2{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--accent-dim);margin:0 0 12px;font-weight:600;
+}
+.docs p{margin:0 0 10px;color:var(--ink-dim);line-height:1.7;max-width:64ch}
+.docs .split{display:grid;grid-template-columns:100px 1fr;gap:6px 16px;font-size:14px}
+.docs .split dt{
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);padding-top:2px;
+}
+.docs .split dd{margin:0;color:var(--ink-dim);line-height:1.6}
+.docs pre{
+  background:var(--plate);border:1px solid var(--line);border-radius:6px;
+  padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;
+  color:var(--accent);line-height:1.7;
+}
+.docs ul.seeds{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:4px}
+.docs ul.seeds li{font-family:var(--mono);font-size:13px;color:var(--ink-dim)}
+.docs .foot{
+  margin-top:44px;padding-top:18px;border-top:1px solid var(--line);
+  font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.04em;
+}
+
+footer.bottom{
+  padding:22px 0 40px;color:var(--ink-faint);font-family:var(--mono);font-size:11px;
+  letter-spacing:.04em;display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;
+}
+footer.bottom .latin{font-style:italic;color:var(--ink-dim)}

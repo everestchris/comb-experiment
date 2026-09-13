@@ -1,0 +1,23 @@
+# What the hive needs. No wallet libraries, no chain libraries - this
+# project never signs anything.
+#
+# After installing these: python -m playwright install chromium
+#
+# Then fetch the connectome (README says where, ~1.1 GB, CC-BY, no account
+# needed) and run: python build_graph.py
+#
+# scripts/make_bee.py only needs numpy, already listed below.
+
+numpy==2.4.2
+scipy==1.17.1
+pandas==3.0.1
+pyarrow==23.0.1          # pandas needs it to read the .feather annotations
+
+fastapi==0.128.0
+uvicorn[standard]==0.40.0
+
+playwright==1.62.0       # the real browser each worker drives
+
+tomli==2.2.1; python_version < "3.11"   # comb.toml, stdlib tomllib on 3.11+
+
+pytest==8.4.2            # for tests/

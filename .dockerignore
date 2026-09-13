@@ -1,0 +1,11 @@
+.git
+__pycache__/
+*.pyc
+.pytest_cache/
+.env
+data/*.feather
+build/trails.jsonl
+build/mb_gains.npz
+build/recordings/
+.venv/
+venv/

@@ -1,0 +1,41 @@
+# comb-beta.0 configuration.
+#
+# Nothing in this file is anatomy. n_workers, salts, decay rates and dopamine
+# amounts are all modelling choices - see README for which facts are real
+# (170-ish Apis antennal lobe glomeruli, a smell-and-polarization brain, no
+# public Apis connectome) and which of this file is just a knob.
+
+port = 4663
+n_workers = 8
+seed_url = "https://en.wikipedia.org/wiki/Waggle_dance"
+
+[hive]
+n_workers = 8        # 1 dancer + 7 attendants
+port = 4663
+tick_hz = 2.0        # ~2 Hz worker loop
+brain_steps = 60     # LIF steps per decision (60 * 0.2ms = 12ms of brain time)
+
+[antenna]
+glomeruli = 170                         # Apis mellifera AL scale (rounded)
+# Salt for the odor-name -> glomerulus hash. Change this and every odor maps
+# to a different (still stable) set of glomeruli. Never learned, never moved.
+salt = "comb-beta.0-antenna-salt-v1"
+glomeruli_per_odor = 8
+max_hz = 180.0
+
+[trails]
+path = "build/trails.jsonl"
+decay = 0.985
+reinforce = 0.35
+min_intensity = 0.02
+
+[dopamine]
+reward = 1.0            # a hop landed on a live 200 page, still in the fence
+veto_penalty = 0.6      # a click attempt was vetoed
+dead_end_penalty = 1.0  # landed somewhere blocked / outside the allowlist
+not_found_penalty = 1.0 # navigation failed or 404'd
+
+# Hosts of the four seeds in web/docs.html, nothing else. Open encyclopedia
+# roam is off - see docs.html's "Seeds" section.
+[allowlist]
+hosts = ["en.wikipedia.org", "github.com", "dance.apis.online"]
