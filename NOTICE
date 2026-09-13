@@ -1,0 +1,33 @@
+comb-experiment
+===============
+
+The code in this repository is MIT licensed - see LICENSE. That licence
+covers the code in this repository and nothing else.
+
+flysim.py, mushroom.py, envcfg.py and build_graph.py are carried over from
+fruitflydev/flycoinrh (MIT), an unrelated project that used the same
+connectome to drive a browser toward token launches. This fork keeps only
+the LIF simulator and the mushroom-body learning rule, drops everything
+related to wallets, providers and live signing, and adds a honeybee-dance
+skin on top (antenna.py, dance.py, hive.py, roam_hive.py, web/).
+
+The connectome is not ours to license. The male Drosophila CNS dataset
+(FlyEM male CNS v1.0) is (c) HHMI Janelia FlyEM, the Cambridge Connectomics
+Group and Google Research, released under CC-BY 4.0, and it stays under
+CC-BY wherever it goes. If you fork this, keep that attribution. Simulation
+methodology after Shiu et al. 2024 (Nature).
+
+Apis mellifera facts cited in this project - antennal-lobe glomerulus count
+on the order of 160-166 (Galizia lab honeybee AL atlas), the waggle dance's
+angle/duration/vigor encoding (von Frisch; Seeley 1995), the dorsal-rim
+polarization compass (Rossel & Wehner 1984) - are cited for the modelling
+choices in dance.py and antenna.py's docstrings, not claimed as measured
+from any EM data. There is no public, complete Apis mellifera connectome.
+Nothing in this repository claims otherwise - see README.md, first line.
+
+record.py's capture mechanics (headless Chromium, record_video_dir, webm ->
+mp4) are carried over from flycoinrh's own record.py (MIT).
+
+No part of this repository is financial advice, and no part of it mints,
+holds, or signs for anything. $COMB is a display ticker with no on-chain
+existence anywhere in this codebase.
